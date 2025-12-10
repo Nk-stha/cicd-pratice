@@ -1,0 +1,31 @@
+# ==========================================
+# Development Dockerfile for Next.js 16 App
+# Optimized for hot reloading and fast iteration
+# ==========================================
+
+FROM node:20-alpine
+
+# Install libc6-compat for Alpine compatibility
+RUN apk add --no-cache libc6-compat
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install all dependencies (including devDependencies)
+RUN npm ci && npm cache clean --force
+
+# Copy source code
+COPY . .
+
+# Set environment variables
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV WATCHPACK_POLLING=true
+
+# Expose the development port
+EXPOSE 3000
+
+# Start the development server with hot reloading
+CMD ["npm", "run", "dev"]
